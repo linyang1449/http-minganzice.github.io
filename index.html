@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>你的"敏感体质"有多强——自检报告</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #faf7f5;
+    color: #3d3633;
+    line-height: 1.8;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 24px 20px;
+    min-height: 100vh;
+  }
+
+  /* 欢迎页 */
+  .welcome-page {
+    padding-top: 40px;
+    text-align: center;
+  }
+
+  .welcome-page h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #5c4d5c;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .welcome-page .intro {
+    font-size: 15px;
+    color: #8a7d7a;
+    text-align: left;
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+
+  .welcome-page .intro p {
+    margin-bottom: 12px;
+  }
+
+  .welcome-page .intro p:last-child {
+    margin-bottom: 0;
+  }
+
+  .start-btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: #b89db8;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .start-btn:hover {
+    background: #a689a6;
+  }
+
+  /* 答题页 */
+  .quiz-page {
+    padding-top: 20px;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: #ece4e0;
+    border-radius: 2px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: #b89db8;
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
+  .question-number {
+    font-size: 13px;
+    color: #b0a39f;
+    margin-bottom: 12px;
+  }
+
+  .question-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #3d3633;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option {
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 15px;
+    color: #5c504d;
+    line-height: 1.6;
+  }
+
+  .option:hover {
+    border-color: #d4c4d4;
+  }
+
+  .option.selected {
+    border-color: #b89db8;
+    background: #f5f0f5;
+  }
+
+  .nav-buttons {
+    margin-top: 24px;
+  }
+
+  .prev-btn {
+    display: block;
+    padding: 12px 24px;
+    background: #f0ebe8;
+    color: #8a7d7a;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .prev-btn:hover {
+    background: #e8e0dc;
+  }
+
+  /* 结果页 */
+  .result-page {
+    padding-top: 20px;
+  }
+
+  .result-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .result-header .score {
+    font-size: 48px;
+    font-weight: 700;
+    color: #b89db8;
+    line-height: 1;
+  }
+
+  .result-header .level {
+    font-size: 20px;
+    font-weight: 600;
+    color: #5c4d5c;
+    margin-top: 8px;
+  }
+
+  .result-header .tagline {
+    font-size: 14px;
+    color: #a89b97;
+    margin-top: 8px;
+  }
+
+  .result-section {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+
+  .result-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #5c4d5c;
+    margin-bottom: 16px;
+  }
+
+  .dimension-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0ebe8;
+  }
+
+  .dimension-row:last-child {
+    border-bottom: none;
+  }
+
+  .dimension-name {
+    font-size: 14px;
+    color: #5c504d;
+  }
+
+  .dimension-score {
+    font-size: 14px;
+    color: #b89db8;
+    font-weight: 500;
+  }
+
+  .stars {
+    color: #d4c4d4;
+    letter-spacing: 2px;
+  }
+
+  .stars .active {
+    color: #b89db8;
+  }
+
+  .report-text {
+    font-size: 15px;
+    color: #5c504d;
+    line-height: 1.9;
+  }
+
+  .report-text p {
+    margin-bottom: 14px;
+  }
+
+  .report-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .report-text .highlight {
+    color: #8a6d8a;
+    font-weight: 500;
+  }
+
+  .advice-item {
+    margin-bottom: 16px;
+    padding-left: 16px;
+    border-left: 3px solid #e8dce8;
+  }
+
+  .advice-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .advice-item h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #5c4d5c;
+    margin-bottom: 6px;
+  }
+
+  .advice-item p {
+    font-size: 14px;
+    color: #8a7d7a;
+    line-height: 1.7;
+  }
+
+  .closing {
+    text-align: center;
+    padding: 24px;
+    background: linear-gradient(135deg, #f5f0f5 0%, #f0e8f0 100%);
+    border-radius: 16px;
+    margin-top: 24px;
+  }
+
+  .closing p {
+    font-size: 15px;
+    color: #8a6d8a;
+    line-height: 1.8;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  /* 密码页 */
+  .password-page {
+    padding-top: 80px;
+    text-align: center;
+  }
+
+  .password-page h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #5c4d5c;
+    margin-bottom: 12px;
+  }
+
+  .password-hint {
+    font-size: 14px;
+    color: #a89b97;
+    margin-bottom: 24px;
+  }
+
+  .password-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e8dce8;
+    border-radius: 12px;
+    font-size: 15px;
+    margin-bottom: 16px;
+    outline: none;
+    text-align: center;
+  }
+
+  .password-input:focus {
+    border-color: #b89db8;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- 密码验证页 -->
+  <div class="password-page" id="passwordPage">
+    <h2>请输入访问密码</h2>
+    <p class="password-hint">购买后请联系客服获取密码</p>
+    <input type="password" id="passwordInput" class="password-input" placeholder="输入密码">
+    <button class="start-btn" onclick="checkPassword()">进入测试</button>
+  </div>
+
+  <!-- 欢迎页 -->
+  <div class="welcome-page hidden" id="welcomePage">
+    <h1>你的"敏感体质"<br>有多强——自检报告</h1>
+    <div class="intro">
+      <p>你是不是也经常有这种感觉：</p>
+      <p>明明只是接了一个任务，却像在等什么坏消息一样坐立不安；<br>
+      明明只是去个陌生的地方，却浑身不自在，想找个地缝钻进去；<br>
+      明明没干什么大事，却每天都很累，好像一直在消耗自己。</p>
+      <p>你可能会觉得："是不是我太脆弱了？""是不是我不正常？"</p>
+      <p>不是的。这只是你的<strong>敏感体质</strong>在起作用。</p>
+      <p>来做个自检，看看你的敏感指数有多高——<br>它不是你的缺点，它只是需要被看见、被理解。</p>
+    </div>
+    <button class="start-btn" onclick="startQuiz()">开始测试</button>
+  </div>
+
+  <!-- 答题页 -->
+  <div class="quiz-page hidden" id="quizPage">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="question-number" id="questionNumber"></div>
+    <div class="question-text" id="questionText"></div>
+    <div class="options" id="options"></div>
+    <div class="nav-buttons">
+      <button class="prev-btn hidden" id="prevBtn" onclick="prevQuestion()">上一题</button>
+    </div>
+  </div>
+
+  <!-- 结果页 -->
+  <div class="result-page hidden" id="resultPage">
+    <div class="result-header">
+      <div class="score" id="totalScore"></div>
+      <div class="level" id="resultLevel"></div>
+      <div class="tagline" id="resultTagline"></div>
+    </div>
+
+    <div class="result-section">
+      <h3>你的敏感地图</h3>
+      <div id="dimensionMap"></div>
+    </div>
+
+    <div class="result-section">
+      <h3>你最累的是什么</h3>
+      <div class="report-text" id="deepAnalysis"></div>
+    </div>
+
+    <div class="result-section">
+      <h3>为什么会这样？</h3>
+      <div class="report-text" id="whySection"></div>
+    </div>
+
+    <div class="result-section">
+      <h3>你可以试着这样做</h3>
+      <div id="adviceSection"></div>
+    </div>
+
+    <div class="closing">
+      <p>"叫出魔鬼名字的那一刻，魔鬼就会消解。"</p>
+      <p>现在你知道了——这不是脆弱，这只是你的敏感体质。<br>看见它，就是改变的开始。</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // 访问密码（你可以自己改）
+  const ACCESS_PASSWORD = "xiangxinziji";
+
+  function checkPassword() {
+    const input = document.getElementById('passwordInput').value.trim();
+    if (input === ACCESS_PASSWORD) {
+      document.getElementById('passwordPage').classList.add('hidden');
+      document.getElementById('welcomePage').classList.remove('hidden');
+    } else {
+      alert('密码不对，请检查后重试');
+    }
+  }
+
+  // 题目数据
+  const questions = [
+    { text: "刚接到一个任务，哪怕截止日期还有很久，你是不是就开始心里不安，一直惦记着？", dimension: "task" },
+    { text: "那种'事情还悬着'的感觉，会不会让你坐立不安，像在等什么坏消息一样？", dimension: "task" },
+    { text: "哪怕只是一件小事，你会不会也忍不住提前好几天就开始准备、反复确认？", dimension: "task" },
+    { text: "在人多的餐厅，你会不会不好意思叫服务员点餐，宁愿憋着或者让朋友去？", dimension: "social" },
+    { text: "小组讨论或者开会时，你明明有想法，会不会觉得'我说的没价值'而不敢开口？", dimension: "social" },
+    { text: "去陌生的场合，你会不会浑身不自在，总觉得别人在看你，想赶紧找个角落躲着？", dimension: "social" },
+    { text: "做完一件事之后，你会不会在心里反复复盘，挑自己哪里做得不好？", dimension: "inner" },
+    { text: "别人对你好的时候，你会不会第一反应是不安，觉得'我不配被这样对待'？", dimension: "inner" },
+    { text: "做错一点小事，你会不会就全盘否定自己，觉得'我怎么什么都做不好'？", dimension: "inner" },
+    { text: "还没发生的事，你会不会忍不住在脑内预演各种可能发生的情况？", dimension: "brain" },
+    { text: "晚上躺在床上，你的脑子是不是还在转，反复想今天说过的话、明天要做的事？", dimension: "brain" },
+    { text: "哪怕一个人待着，你会不会也在担心'会不会有什么事找我''会不会出什么问题'？", dimension: "brain" },
+    { text: "压力大/焦虑的时候，你会不会皮肤出问题（长痘、皮炎、泛红、出油多）？", dimension: "body" },
+    { text: "紧张的时候，你会不会肠胃不舒服、呼吸变短、心跳加快？", dimension: "body" },
+    { text: "是不是经常觉得累，明明没干什么体力活，却觉得整个人被掏空了？", dimension: "body" }
+  ];
+
+  const options = [
+    { label: "完全不会 / 不会", value: 1 },
+    { label: "偶尔会这样", value: 2 },
+    { label: "经常会这样", value: 3 },
+    { label: "一定会 / 完全就是我", value: 4 }
+  ];
+
+  let currentQuestion = 0;
+  let answers = [];
+  let selectedOption = null;
+
+  function startQuiz() {
+    document.getElementById('welcomePage').classList.add('hidden');
+    document.getElementById('quizPage').classList.remove('hidden');
+    showQuestion();
+  }
+
+  function showQuestion() {
+    const q = questions[currentQuestion];
+    document.getElementById('questionNumber').textContent = `第 ${currentQuestion + 1} / 15 题`;
+    document.getElementById('questionText').textContent = q.text;
+    document.getElementById('progressFill').style.width = (currentQuestion / 15 * 100) + '%';
+    
+    const prevBtn = document.getElementById('prevBtn');
+    if (currentQuestion > 0) {
+      prevBtn.classList.remove('hidden');
+    } else {
+      prevBtn.classList.add('hidden');
+    }
+    
+    const optionsContainer = document.getElementById('options');
+    optionsContainer.innerHTML = '';
+    options.forEach((opt, idx) => {
+      const div = document.createElement('div');
+      div.className = 'option';
+      div.textContent = opt.label;
+      div.onclick = () => selectOption(idx, div);
+      optionsContainer.appendChild(div);
+    });
+
+    selectedOption = null;
+  }
+
+  function selectOption(idx, element) {
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    element.classList.add('selected');
+    selectedOption = idx;
+    
+    setTimeout(() => {
+      nextQuestion();
+    }, 300);
+  }
+
+  function prevQuestion() {
+    if (currentQuestion > 0) {
+      currentQuestion--;
+      answers.pop();
+      showQuestion();
+    }
+  }
+
+  function nextQuestion() {
+    if (selectedOption === null) return;
+    
+    answers.push({
+      questionIndex: currentQuestion,
+      dimension: questions[currentQuestion].dimension,
+      value: options[selectedOption].value
+    });
+
+    currentQuestion++;
+
+    if (currentQuestion < 15) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult() {
+    document.getElementById('quizPage').classList.add('hidden');
+    document.getElementById('resultPage').classList.remove('hidden');
+    document.getElementById('progressFill').style.width = '100%';
+
+    const total = answers.reduce((sum, a) => sum + a.value, 0);
+    document.getElementById('totalScore').textContent = total;
+
+    const dimensions = { task: 0, social: 0, inner: 0, brain: 0, body: 0 };
+    answers.forEach(a => {
+      dimensions[a.dimension] += a.value;
+    });
+
+    let level, tagline;
+    if (total <= 24) {
+      level = "低敏感体质";
+      tagline = "你内心很'粗线条'";
+    } else if (total <= 34) {
+      level = "轻度敏感";
+      tagline = "偶尔会想多";
+    } else if (total <= 44) {
+      level = "高敏感体质";
+      tagline = "你比大多数人都敏锐";
+    } else {
+      level = "超级敏感体质";
+      tagline = "你的敏感在消耗你了";
+    }
+
+    document.getElementById('resultLevel').textContent = level;
+    document.getElementById('resultTagline').textContent = tagline;
+
+    const dimNames = {
+      task: "任务焦虑",
+      social: "社交恐惧",
+      inner: "内在批判",
+      brain: "大脑停不下来",
+      body: "躯体化反应"
+    };
+
+    let mapHtml = '';
+    for (let dim in dimensions) {
+      const score = dimensions[dim];
+      const stars = Math.round(score / 3);
+      let starsHtml = '';
+      for (let i = 1; i <= 5; i++) {
+        starsHtml += `<span class="${i <= stars ? 'active' : ''}">★</span>`;
+      }
+      mapHtml += `
+        <div class="dimension-row">
+          <span class="dimension-name">${dimNames[dim]}</span>
+          <span class="stars">${starsHtml}</span>
+          <span class="dimension-score">${score}分</span>
+        </div>
+      `;
+    }
+    document.getElementById('dimensionMap').innerHTML = mapHtml;
+
+    let maxDim = 'task', maxScore = 0;
+    for (let dim in dimensions) {
+      if (dimensions[dim] > maxScore) {
+        maxScore = dimensions[dim];
+        maxDim = dim;
+      }
+    }
+
+    const analysisTexts = {
+      task: `
+        <p>你最累的是<span class="highlight">任务焦虑</span>。</p>
+        <p>你就像一个永远在等坏消息的人——事情只要没做完，就一直悬在心上。哪怕截止日期还有很久，你也放不下。</p>
+        <p>那种"还没完成"的感觉，就像铡刀悬在头顶，让你坐立不安。你不是懒，也不是不想做，你是被焦虑困住了，动不了。</p>
+      `,
+      social: `
+        <p>你最累的是<span class="highlight">社交恐惧</span>。</p>
+        <p>在人群里，你总觉得不自在——不好意思叫服务员、不敢在小组里发言、到陌生场合就想找个角落躲着。</p>
+        <p>你总觉得别人在看你、在评判你，就像生活里到处都是摄像机。你不是不想社交，你是太怕出错了。</p>
+      `,
+      inner: `
+        <p>你最累的是<span class="highlight">内在批判</span>。</p>
+        <p>你内心有一个声音，24小时都在工作——做完事挑毛病、做错事全盘否定、别人对你好你觉得不配。</p>
+        <p>你对自己太苛刻了。你心里那个批评你的声音，比任何人对你的要求都高。</p>
+      `,
+      brain: `
+        <p>你最累的是<span class="highlight">大脑停不下来</span>。</p>
+        <p>你的脑子就像一台关不掉的机器——晚上躺下了还在转、还没发生的事已经预演了十种结果、一个人待着也在担心会不会有什么事。</p>
+        <p>你不仅在做事，你还在脑内把每件事都重新做一遍、担心一遍。这就是你为什么明明没干什么，却每天都很累。</p>
+      `,
+      body: `
+        <p>你最累的是<span class="highlight">躯体化反应</span>。</p>
+        <p>你的身体已经在替你扛了——皮肤出问题、肠胃不舒服、呼吸短、总是累。</p>
+        <p>它不是在闹脾气，它是在提醒你："我撑不住了，你慢一点。"焦虑真的会变成身体上的痛。</p>
+      `
+    };
+
+    document.getElementById('deepAnalysis').innerHTML = analysisTexts[maxDim];
+
+    document.getElementById('whySection').innerHTML = `
+      <p>那个内心批判的声音，不是天生就有的。</p>
+      <p>它是小时候，一次次被批评、被要求懂事、被拿来比较之后，你自己内化成的——因为怕被别人骂，所以先骂自己；怕被别人失望，所以先把自己否定掉。</p>
+      <p>这是你小时候保护自己的方式。只是现在，你已经长大了，它还在自动运行。</p>
+    `;
+
+    const adviceByDim = {
+      task: `
+        <div class="advice-item">
+          <h4>1. 5分钟启动法：不要想"做完"，只想"开始"</h4>
+          <p>你不是不想做，你是被"要做完"的压力吓住了。下次接到任务，不要想"我要把它做完"，告诉自己："我就做5分钟，5分钟后不想做就停。" 90%的情况是，你一旦开始了，就会继续做下去。就算真的只做了5分钟，也比焦虑了一整天强。</p>
+        </div>
+        <div class="advice-item">
+          <h4>2. 写下来法：把脑子里的"挂心事"卸下来</h4>
+          <p>拿一张纸，把脑子里所有悬着的事全部写下来——"要交的报告""要买的东西""要回的消息"。写完之后，把纸放在桌上，告诉自己："纸帮我记着，不用我脑子一直背着。" 你会发现，写下来的那一刻，心里就松了一块。</p>
+        </div>
+        <div class="advice-item">
+          <h4>3. 预演时间盒：专门拿时间想，其他时间不想</h4>
+          <p>你忍不住要预演各种坏结果，那就不要硬压着。每天固定15分钟（比如晚上8点），专门用来"担心"——坐下来，把所有可能的坏结果都想一遍，想完就告诉自己："好了，担心完了，明天再想。" 其他时间脑子又开始转的时候，就说："等8点再想。"</p>
+        </div>
+        <div class="advice-item">
+          <h4>4. 最坏结果清单：想透它，就不怕了</h4>
+          <p>拿一张纸，写下这件事最坏的结果是什么。然后问自己："如果真的发生了，我能怎么办？" 你会发现，就算最坏的结果发生了，你也能扛过去。焦虑往往来自"想不清楚"，一旦你把最坏的结果写下来、想透了，它就没那么可怕了。</p>
+        </div>
+      `,
+      social: `
+        <div class="advice-item">
+          <h4>1. 3秒法则：想做的事，3秒内行动</h4>
+          <p>你不好意思叫服务员、不好意思开口说话——都是因为你在心里犹豫太久了。下次想做什么，数3秒，3、2、1，立刻行动。不给大脑害怕的时间。叫个服务员而已，说一句话而已，做完你会发现，根本没什么大不了的。</p>
+        </div>
+        <div class="advice-item">
+          <h4>2. 最小暴露练习：从最简单的场景开始练</h4>
+          <p>不要一下子逼自己去大场合社交。从最小的开始：今天在便利店跟收银员说一声"谢谢"；明天在电梯里跟邻居点个头；后天在餐厅试着叫服务员加杯水。 每次做完，记下来——"我做到了！" 慢慢积累，你会越来越有底气。</p>
+        </div>
+        <div class="advice-item">
+          <h4>3. 观众效应拆解：别人其实没在看你</h4>
+          <p>你总觉得别人在看你、在评判你——但真相是，大家都在忙着担心自己出丑，根本没空想你。 你想想：你会记住昨天在餐厅里那个叫服务员的人吗？不会。别人也一样。大家都在演自己的戏，没人当你的观众。</p>
+        </div>
+        <div class="advice-item">
+          <h4>4. 准备脚本法：提前准备几句话</h4>
+          <p>小组讨论不敢发言？提前准备两三句话，背下来。开会要说话？提前想好要说什么。 你不是要临场发挥，你是要提前写好台词。练多了，你就会发现：原来我也能说，而且说得不差。</p>
+        </div>
+      `,
+      inner: `
+        <div class="advice-item">
+          <h4>1. 声音命名法：给内心那个批评者起个名字</h4>
+          <p>下次那个声音又开始骂你的时候，给它起个名字——比如"老王""刻薄鬼"。然后在心里说："哦，老王又开始唠叨了。" 你会发现，一旦你给它起了名字，它就从"我"变成了"另一个人"，你就没那么容易被它影响了。</p>
+        </div>
+        <div class="advice-item">
+          <h4>2. 第三人称对话法：像安慰朋友一样安慰自己</h4>
+          <p>如果你最好的朋友做错了一件事，你会怎么安慰他？你会说："没关系，谁都会犯错，下次注意就好。" 那你为什么要对自己那么苛刻？ 下次自我批评的时候，换个角度：想象你在安慰一个好朋友，把对他说的话，对自己说一遍。</p>
+        </div>
+        <div class="advice-item">
+          <h4>3. 配得感日记：每天记一件"我值得"的事</h4>
+          <p>别人对你好你觉得不配？那从今天开始，每天写一件"我值得被好好对待"的事——"今天我认真工作了，我很棒""今天我帮了别人，我是个好人"。 坚持写一个月，你会慢慢相信：我是值得的。</p>
+        </div>
+        <div class="advice-item">
+          <h4>4. 60分就好法：允许自己不完美</h4>
+          <p>你敏感，所以你想把每件事都做到100分。但这个世界就是个草台班子——大家都是60分在硬撑，你为什么要逼自己做到100分？ 下次又开始挑自己毛病的时候，告诉自己："60分就够了。真的。"</p>
+        </div>
+      `,
+      brain: `
+        <div class="advice-item">
+          <h4>1. 大脑关机时间：每天给自己一个"断网时刻"</h4>
+          <p>每天固定一个时间（比如晚上10点），之后不再想任何工作/任务的事。把手机放远一点，告诉自己："今天结束了，明天再想。" 刚开始你会不习惯，脑子还是会转，但坚持一周，你会发现：原来我也能停下来。</p>
+        </div>
+        <div class="advice-item">
+          <h4>2. 身体锚定法：用呼吸把自己拉回当下</h4>
+          <p>脑子又开始转了？停下来，做3次深呼吸：吸气4秒，憋气4秒，呼气6秒。 感受一下你的脚踩在地上的感觉，感受一下你坐着的椅子。 这叫"锚定"——把你的注意力从脑子里，拉回到身体上。做3次，你就会发现，没那么慌了。</p>
+        </div>
+        <div class="advice-item">
+          <h4>3. 5分钟放空：什么都不干，就发呆</h4>
+          <p>每天留5分钟，什么都不干——不看手机、不想事情、不听音乐。就坐着，发呆，看窗外。 刚开始你会觉得很煎熬，脑子停不下来。但坚持几天，你会发现：原来放空是这种感觉，原来我的脑子可以休息。</p>
+        </div>
+        <div class="advice-item">
+          <h4>4. 焦虑 park：把担心存起来，以后再想</h4>
+          <p>脑子里又开始转了？拿一张纸，把担心的事写下来，折好，放进一个盒子里——这个盒子就是你的"焦虑park"。告诉自己："我把它存起来了，周末再拿出来想。" 你会发现，到了周末，你根本不想拿出来看了。</p>
+        </div>
+      `,
+      body: `
+        <div class="advice-item">
+          <h4>1. 呼吸放松练习：每天5分钟，缓解身体紧绷</h4>
+          <p>找个舒服的地方坐下，闭上眼睛。慢慢吸气4秒，憋气4秒，慢慢呼气6秒。重复10次。 你会感觉到，肩膀慢慢松下来，呼吸慢慢变深。焦虑的时候，身体是紧绷的；呼吸慢下来，身体就会跟着放松。</p>
+        </div>
+        <div class="advice-item">
+          <h4>2. 身体扫描：睡前从脚到头放松一遍</h4>
+          <p>躺在床上，从脚趾开始，慢慢往上——脚趾、脚掌、小腿、大腿、肚子、胸口、手、肩膀、脸、头。 每到一个部位，就告诉它："放松。" 你会发现，原来我的身体绷了这么久，原来放松是这种感觉。</p>
+        </div>
+        <div class="advice-item">
+          <h4>3. 边界感练习：学会说"不"</h4>
+          <p>你讨好别人、不敢拒绝——身体就在替你扛。从今天开始，试着拒绝一件小事——"今天我不想出去，改天吧。" 你会发现，天不会塌下来，别人也不会因此讨厌你。 学会拒绝，就是在给你的身体减负。</p>
+        </div>
+        <div class="advice-item">
+          <h4>4. 每天出门走10分钟：让身体动起来</h4>
+          <p>不要一直待在屋子里。每天出门走10分钟，晒晒太阳，看看树。 运动是最好的抗焦虑药——身体动起来了，脑子里的那些担忧，就会跟着动起来、散掉。</p>
+        </div>
+      `
+    };
+
+    const commonAdvice = `
+      <div class="advice-item">
+        <h4>💡 今天就能开始的3个小练习</h4>
+        <p><strong>1. 写下来：</strong>现在拿一张纸，把脑子里所有悬着的事写下来。写完你会发现，心里松了一块。</p>
+        <p><strong>2. 深呼吸：</strong>现在做3次深呼吸——吸气4秒，憋气4秒，呼气6秒。做完你会发现，没那么慌了。</p>
+        <p><strong>3. 对自己说：</strong>"这不是脆弱，这只是我的敏感体质。看见它，就是改变的开始。"</p>
+      </div>
+    `;
+
+    document.getElementById('adviceSection').innerHTML = adviceByDim[maxDim] + commonAdvice;
+  }
+</script>
+
+</body>
+</html>
